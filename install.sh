@@ -107,12 +107,7 @@ main() {
     link_dotfile "$file"
   done
 
-  if [ -f ~/.bashrc ]; then
-    # shellcheck disable=SC1090
-    source ~/.bashrc
-  fi
-
-  printf 'Done. Installation completed.\n'
+  printf 'Done. Installation completed. Please run "source ~/.bashrc" to apply the changes.\n'
 }
 
 main
