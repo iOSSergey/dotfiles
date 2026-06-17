@@ -60,11 +60,11 @@ ensure_git() {
 clone_or_update_repo() {
   if [ -d "$DOTFILES_DIR/.git" ]; then
     info "Updating existing dotfiles repository in $DOTFILES_DIR"
-    git -C "$DOTFILES_DIR" pull --ff-only origin main 2>/dev/null || true
-    git -C "$DOTFILES_DIR" fetch --all --prune
+    git -C "$DOTFILES_DIR" pull --quiet --ff-only origin main 2>/dev/null || true
+    git -C "$DOTFILES_DIR" fetch --quiet --all --prune
   else
     info "Cloning dotfiles repository into $DOTFILES_DIR"
-    git clone --depth 1 "$REPO_URL" "$DOTFILES_DIR"
+    git clone --quiet --depth 1 "$REPO_URL" "$DOTFILES_DIR"
   fi
 }
 
@@ -74,12 +74,12 @@ link_dotfile() {
   local dest="$HOME/$file"
 
   if [ ! -e "$src" ]; then
-    info "Skipping missing file: $src"
+    info "Skipping missing dotfile: $file"
     return
   fi
 
-  cp -f "$src" "$dest"
-  info "Copied $src -> $dest"
+  cp -f -- "$src" "$dest"
+  info "Installed $file"
 }
 
 main() {
