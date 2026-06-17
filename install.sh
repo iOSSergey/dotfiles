@@ -103,16 +103,13 @@ main() {
     fi
   fi
 
-  local installed_count=0
   for file in "${FILES[@]}"; do
-    if link_dotfile "$file"; then
-      installed_count=$((installed_count + 1))
-    fi
+    link_dotfile "$file"
   done
 
-  if [ -f "$HOME/.bashrc" ]; then
+  if [ -f ~/.bashrc ]; then
     # shellcheck disable=SC1090
-    source "$HOME/.bashrc"
+    source ~/.bashrc
   fi
 
   printf 'Done. Installation completed.\n'
