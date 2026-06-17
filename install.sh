@@ -67,7 +67,7 @@ link_dotfile() {
   local dest="$HOME/$file"
 
   if [ ! -e "$src" ]; then
-    return
+    return 1
   fi
 
   cp -f -- "$src" "$dest"
@@ -103,11 +103,14 @@ main() {
     fi
   fi
 
+  local installed_count=0
   for file in "${FILES[@]}"; do
-    link_dotfile "$file"
+    if link_dotfile "$file"; then
+      installed_count=$((installed_count + 1))
+    fi
   done
 
-  if [ -f "$HOME/.bashrc" ]; then
+  if [ "$installed_count" -gt 0 ] && [ -f "$HOME/.bashrc" ]; then
     # shellcheck disable=SC1090
     source "$HOME/.bashrc"
   fi
