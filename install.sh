@@ -16,7 +16,7 @@ info() {
 }
 
 ask_overwrite() {
-  local dest="$1"
+  local dest_list="$1"
   local response
   local input=/dev/tty
 
@@ -25,24 +25,13 @@ ask_overwrite() {
   fi
 
   while true; do
-    read -r -p "Destination exists: $dest. Overwrite? [y/N] " response <"$input"
+    read -r -p "Found existing files: $dest_list. Overwrite them? [y/N] " response <"$input"
     case "$response" in
       [yY]|[yY][eE][sS]) return 0 ;; 
       [nN]|'' ) return 1 ;; 
       *) printf 'Please answer yes or no.\n' ;; 
     esac
   done
-}
-
-backup_file() {
-  local path="$1"
-  local timestamp
-  timestamp=$(date +%Y%m%d%H%M%S)
-
-  if [ -e "$path" ] || [ -L "$path" ]; then
-    mv -f "$path" "${path}.bak.$timestamp"
-    info "Backed up $path -> ${path}.bak.$timestamp"
-  fi
 }
 
 ensure_git() {
@@ -89,27 +78,32 @@ link_dotfile() {
     return
   fi
 
-  if [ -L "$dest" ] && [ "$(readlink -f "$dest")" = "$src" ]; then
-    info "Already linked: $dest"
-    return
-  fi
-
-  if [ -e "$dest" ] || [ -L "$dest" ]; then
-    if ask_overwrite "$dest"; then
-      backup_file "$dest"
-    else
-      info "Skipped: $dest"
-      return
-    fi
-  fi
-
-  ln -sf "$src" "$dest"
-  info "Linked $dest -> $src"
+  cp -f "$src" "$dest"
+  info "Copied $src -> $dest"
 }
 
 main() {
   ensure_git
   clone_or_update_repo
+
+  local existing_files=()
+  for file in "${FILES[@]}"; do
+    local dest="$HOME/$file"
+    if [ -e "$dest" ] || [ -L "$dest" ]; then
+      existing_files+=("$file")
+    fi
+  done
+
+  if [ ${#existing_files[@]} -gt 0 ]; then
+    local list
+    list=$(printf '%s, ' "${existing_files[@]}")
+    list=${list%, }
+    if ! ask_overwrite "$list"; then
+      info "Thank you. Exiting."
+      exit 0
+    fi
+  fi
+
   for file in "${FILES[@]}"; do
     link_dotfile "$file"
   done
