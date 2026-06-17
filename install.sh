@@ -18,9 +18,14 @@ info() {
 ask_overwrite() {
   local dest="$1"
   local response
+  local input=/dev/tty
+
+  if [ ! -r "$input" ]; then
+    error "Cannot prompt for overwrite because /dev/tty is unavailable."
+  fi
 
   while true; do
-    read -rp "Destination exists: $dest. Overwrite? [y/N] " response
+    read -r -p "Destination exists: $dest. Overwrite? [y/N] " response <"$input"
     case "$response" in
       [yY]|[yY][eE][sS]) return 0 ;; 
       [nN]|'' ) return 1 ;; 
