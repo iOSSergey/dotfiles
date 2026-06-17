@@ -15,11 +15,28 @@ info() {
   printf '%s\n' "$*"
 }
 
+ask_overwrite() {
+  local dest="$1"
+  local response
+
+  while true; do
+    read -rp "Destination exists: $dest. Overwrite? [y/N] " response
+    case "$response" in
+      [yY]|[yY][eE][sS]) return 0 ;; 
+      [nN]|'' ) return 1 ;; 
+      *) printf 'Please answer yes or no.\n' ;; 
+    esac
+  done
+}
+
 backup_file() {
   local path="$1"
+  local timestamp
+  timestamp=$(date +%Y%m%d%H%M%S)
+
   if [ -e "$path" ] || [ -L "$path" ]; then
-    mv -f "$path" "${path}.bak"
-    info "Backed up $path -> ${path}.bak"
+    mv -f "$path" "${path}.bak.$timestamp"
+    info "Backed up $path -> ${path}.bak.$timestamp"
   fi
 }
 
@@ -72,7 +89,15 @@ link_dotfile() {
     return
   fi
 
-  backup_file "$dest"
+  if [ -e "$dest" ] || [ -L "$dest" ]; then
+    if ask_overwrite "$dest"; then
+      backup_file "$dest"
+    else
+      info "Skipped: $dest"
+      return
+    fi
+  fi
+
   ln -sf "$src" "$dest"
   info "Linked $dest -> $src"
 }
