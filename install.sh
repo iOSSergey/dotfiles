@@ -110,7 +110,7 @@ main() {
     fi
   done
 
-  if [ "$installed_count" -gt 0 ] && [ -f "$HOME/.bashrc" ]; then
+  if [ -f "$HOME/.bashrc" ]; then
     # shellcheck disable=SC1090
     source "$HOME/.bashrc"
   fi
