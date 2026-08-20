@@ -10,11 +10,12 @@ alias ba='cd ~/backup'
 alias bael='cd ~/backup/eltour'
 alias bagr='cd ~/backup/grenada'
 alias balo='cd ~/backup/lobasto'
-alias bs='cd ~/dev/scripts/backup_scripts/active_scripts'
+alias baso='cd ~/backup/solaro'
+alias baca='cd ~/backup/carmelia'
+alias bs='cd ~/dev/scripts'
 alias mpw='cd ~/dev/my-personal-website'
 alias k8s='cd ~/dev/kubernetes'
 alias eks='cd ~/dev/kubernetes/eks-manifests'
-alias dia='cd ~/dev/docker/docker-in-action-app'
 alias map='cd ~/dev/my-ansible-project'
 alias tp='cd ~/dev/terraform'
 
@@ -26,11 +27,11 @@ alias owrt='ssh local-openwrt'
 alias ec2='ssh us-aws-ec2'
 alias gr='ssh grenada'
 alias ca='ssh carmelia'
+alias so='ssh solaro'
 
 # File Management Aliases
 
 # System Management Aliases
-alias b='vi ~/.bashrc && source ~/.bashrc'
 alias a='vi ~/.bash_{aliases,functions} && source ~/.bashrc'
 alias up='sudo apt update && sudo apt upgrade -y'
 alias ut='uptime'
@@ -42,7 +43,7 @@ alias ap2restart='sudo service apache2 restart'
 
 # Row 1: QWERTYUIOP
 alias q='jq'                 # JSON processor
-alias w="watch -n 2 'uptime; echo; free -m; echo; ss -s | head -10'"       # Rerun a command periodically
+alias w='watch -n 2 "uptime; echo; free -m; echo; ss -s | head -10; echo; ps -eo pid,user,comm,rss,%mem --sort=-rss | awk '\''NR==1 {print \$0; next} {printf \"%-8s %-12s %-25s %8.1f MiB %6s\\n\",\$1,\$2,\$3,\$4/1024,\$5}'\'' | head -10"'       # Rerun a command periodically
 alias e='echo'               # Print text
 alias r='rg'                 # ripgrep: fast code/text search
 alias t='terraform'          # Infrastructure as Code (HashiCorp)
@@ -80,22 +81,8 @@ alias kgp='kubectl get pods'
 alias kgn='kubectl get nodes'
 alias kgs='kubectl get svc'
 alias kgd='kubectl get deployment'
-alias kgrs='kubectl get replicaset'
-alias kgds='kubectl get daemonset'
-alias kgns='kubectl get namespace'
-alias kgcm='kubectl get configmaps'
-alias kgi='kubectl get ingress'
 alias kga='kubectl get all'
-alias ktn='kubectl top nodes'
 alias kd='kubectl describe'
-alias kdp='kubectl describe pod'
-alias kdn='kubectl describe node'
-alias kds='kubectl describe service'
-alias kdrs='kubectl describe replicaset'
-alias kdds='kubectl describe daemonset'
-alias kdns='kubectl describe namespace'
-alias kdcm='kubectl describe configmaps'
-alias kdi='kubectl describe ingress'
 alias kaf='kubectl apply -f'
 alias kdel='kubectl delete'
 alias pf='kubectl port-forward svc/nginx-service 8080:80' # Forward ports for Kubernetes service
@@ -395,8 +382,8 @@ fi
 # --------------------------------------------
 # Bootstrap & Scripts Setup
 # --------------------------------------------
-alias setup-scripts='curl -fsSL https://raw.githubusercontent.com/iOSSergey/scripts/main/install.sh | bash'
-alias setup-bootstrap='curl -fsSL https://raw.githubusercontent.com/iOSSergey/bootstrap/main/install.sh | sudo bash'
+alias scripts='curl -fsSL https://raw.githubusercontent.com/iOSSergey/scripts/main/install.sh | bash'
+alias bootstrap='curl -fsSL https://raw.githubusercontent.com/iOSSergey/bootstrap/main/install.sh | sudo bash'
 
 # --------------------------------------------
 # End of file marker
