@@ -4,7 +4,6 @@ Repository for personal shell configuration files and installer.
 
 ## Included files
 
-- `.bashrc`
 - `.bash_aliases`
 - `.bash_functions`
 - `install.sh`
@@ -15,9 +14,8 @@ Repository for personal shell configuration files and installer.
 
 - ensures `git` is installed
 - clones or updates the repository into `~/.dotfiles`
-- copies dotfiles from `~/.dotfiles` into the user's home directory
-- prompts once when existing target files are found
-- sources `~/.bashrc` after a successful install
+- keeps `.bash_aliases` and `.bash_functions` in `~/.dotfiles`
+- updates the local `~/.bashrc` to source Bash files directly from `~/.dotfiles`
 
 ## Install via alias
 
@@ -35,6 +33,6 @@ dotfiles
 
 ## Notes
 
-- Existing dotfiles are not overwritten without confirmation.
-- The installer uses `cp -f` to copy files rather than creating symlinks.
+- Existing `~/.bashrc` content is not overwritten.
+- The installer does not create symlinks.
 - The repository is cloned into `~/.dotfiles`.

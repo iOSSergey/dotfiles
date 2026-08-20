@@ -4,30 +4,16 @@ set -euo pipefail
 
 REPO_URL="https://github.com/iOSSergey/dotfiles.git"
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
-FILES=(.bashrc .bash_aliases .bash_functions)
+BASH_FILES=(.bash_aliases .bash_functions)
+BASHRC_LINES=(
+  "DOTFILES=\"\$HOME/.dotfiles\""
+  "[ -r \"\$DOTFILES/.bash_aliases\" ] && source \"\$DOTFILES/.bash_aliases\""
+  "[ -r \"\$DOTFILES/.bash_functions\" ] && source \"\$DOTFILES/.bash_functions\""
+)
 
 error() {
   printf '%s\n' "$*" >&2
   exit 1
-}
-
-ask_overwrite() {
-  local prompt="$1"
-  local response
-  local input=/dev/tty
-
-  if [ ! -r "$input" ]; then
-    error "Cannot prompt for overwrite because /dev/tty is unavailable."
-  fi
-
-  while true; do
-    read -r -p "$prompt" response <"$input"
-    case "$response" in
-      [yY]|[yY][eE][sS]) return 0 ;; 
-      [nN]|'' ) return 1 ;; 
-      *) printf 'Please answer yes or no.\n' ;; 
-    esac
-  done
 }
 
 ensure_git() {
@@ -61,51 +47,63 @@ clone_or_update_repo() {
   fi
 }
 
-link_dotfile() {
+ensure_bash_files() {
   local file="$1"
-  local src="$DOTFILES_DIR/$file"
-  local dest="$HOME/$file"
 
-  if [ ! -e "$src" ]; then
-    return 1
+  if [ ! -e "$DOTFILES_DIR/$file" ]; then
+    error "Missing $DOTFILES_DIR/$file."
+  fi
+}
+
+line_exists() {
+  local line="$1"
+  local file="$2"
+
+  grep -Fqx -- "$line" "$file"
+}
+
+ensure_bashrc() {
+  local bashrc="$HOME/.bashrc"
+  local line
+  local missing_lines=()
+  local needs_update=0
+
+  if [ -L "$bashrc" ]; then
+    error "$bashrc is a symlink. Replace it with a regular file and rerun."
   fi
 
-  cp -f -- "$src" "$dest"
+  if [ ! -e "$bashrc" ]; then
+    : >"$bashrc"
+  fi
+
+  for line in "${BASHRC_LINES[@]}"; do
+    if ! line_exists "$line" "$bashrc"; then
+      missing_lines+=("$line")
+      needs_update=1
+    fi
+  done
+
+  if [ "$needs_update" -eq 0 ]; then
+    return
+  fi
+
+  {
+    printf '\n'
+    for line in "${missing_lines[@]}"; do
+      printf '%s\n' "$line"
+    done
+  } >>"$bashrc"
 }
 
 main() {
   ensure_git
   clone_or_update_repo
 
-  local existing_files=()
-  for file in "${FILES[@]}"; do
-    local dest="$HOME/$file"
-    if [ -e "$dest" ] || [ -L "$dest" ]; then
-      existing_files+=("$file")
-    fi
+  for file in "${BASH_FILES[@]}"; do
+    ensure_bash_files "$file"
   done
 
-  if [ ${#existing_files[@]} -gt 0 ]; then
-    local list
-    list=$(printf '%s, ' "${existing_files[@]}")
-    list=${list%, }
-    local prompt
-
-    if [ ${#existing_files[@]} -eq 1 ]; then
-      prompt="Found existing file: $list. Overwrite it? [y/N] "
-    else
-      prompt="Found existing files: $list. Overwrite them? [y/N] "
-    fi
-
-    if ! ask_overwrite "$prompt"; then
-      printf 'No changes made. Exiting.\n'
-      exit 0
-    fi
-  fi
-
-  for file in "${FILES[@]}"; do
-    link_dotfile "$file"
-  done
+  ensure_bashrc
 
   printf 'Done. Installation completed. Please run "source ~/.bashrc" to apply the changes.\n'
 }
