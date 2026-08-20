@@ -61,7 +61,7 @@ alias f='find'               # Find files/directories
 # alias g='git'                # Version control
 # alias h='helm'               # Kubernetes package manager
 alias j='journalctl -xe'     # systemd logs (errors/verbose)
-# alias k='kubectl'            # Kubernetes CLI
+alias k='kubectl'             # Kubernetes CLI
 # alias l='ls -lah'            # List files (detailed, human-readable)
 
 # Row 3: ZXCVBNM
@@ -74,9 +74,11 @@ alias n='nano'               # Nano's ANOther text editor, inspired by Pico
 alias m='man'                # Display online manual documentation pages
 
 # Kubernetes Aliases
+alias kg='kubectl get'
+alias kn='kubectl config set-context --current --namespace'
 alias kgp='kubectl get pods'
 alias kgn='kubectl get nodes'
-alias kgs='kubectl get services'
+alias kgs='kubectl get svc'
 alias kgd='kubectl get deployment'
 alias kgrs='kubectl get replicaset'
 alias kgds='kubectl get daemonset'
@@ -85,6 +87,7 @@ alias kgcm='kubectl get configmaps'
 alias kgi='kubectl get ingress'
 alias kga='kubectl get all'
 alias ktn='kubectl top nodes'
+alias kd='kubectl describe'
 alias kdp='kubectl describe pod'
 alias kdn='kubectl describe node'
 alias kds='kubectl describe service'
@@ -94,10 +97,13 @@ alias kdns='kubectl describe namespace'
 alias kdcm='kubectl describe configmaps'
 alias kdi='kubectl describe ingress'
 alias kaf='kubectl apply -f'
+alias kdel='kubectl delete'
 alias pf='kubectl port-forward svc/nginx-service 8080:80' # Forward ports for Kubernetes service
 alias mk='kubectl config use-context minikube' # Switch to Minikube context
 alias kctx='kubectx'
 alias kns='kubens'
+export dry='--dry-run=client -o yaml'
+export now='--force --grace-period=0'
 
 # Google Cloud Aliases
 alias gk='gcloud container clusters get-credentials kubia --zone us-central1-a --project infra-mix-450113-i8'
@@ -129,7 +135,7 @@ alias reload='source ~/.bashrc'
 alias ls='ls --color=auto'
 alias l='ls -laF' # List files in current directory
 alias la='ls -lah'
-alias ll='ls -lF'
+alias ll='ls -lah'
 alias laf='ls -laF'
 alias lt='ls -lFt'
 
@@ -220,7 +226,6 @@ alias unzipq='unzip -q'
 alias grep='grep --color=auto --exclude-dir={.git,.hg,.svn,node_modules,dist,build}'
 
 # Timestamps and Date Formats
-alias now='date -Iseconds'
 alias today='date +"%Y-%m-%d"'
 alias week='date +"%G-W%V"'
 alias unixts='date +%s'
@@ -280,6 +285,7 @@ alias ghead='git rev-parse --short HEAD'
 alias gsu='git submodule update --init --recursive'
 
 # Docker Aliases
+alias de='docker exec'
 alias dps='docker ps'
 alias dpsa='docker ps -a'
 alias di='docker images'
