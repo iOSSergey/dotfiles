@@ -5,7 +5,14 @@ set -euo pipefail
 REPO_URL="https://github.com/iOSSergey/dotfiles.git"
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
 BASH_FILES=(.bash_aliases .bash_functions)
-BASHRC_LINES=(
+
+if [ -f /System/Library/CoreServices/SystemVersion.plist ]; then
+  BASH_CONFIG_FILE="$HOME/.bash_profile"
+else
+  BASH_CONFIG_FILE="$HOME/.bashrc"
+fi
+
+BASH_CONFIG_LINES=(
   "DOTFILES=\"\$HOME/.dotfiles\""
   "[ -r \"\$DOTFILES/.bash_aliases\" ] && source \"\$DOTFILES/.bash_aliases\""
   "[ -r \"\$DOTFILES/.bash_functions\" ] && source \"\$DOTFILES/.bash_functions\""
@@ -17,15 +24,19 @@ error() {
 }
 
 ensure_git() {
-  if command -v git >/dev/null 2>&1; then
+  if [ -f /System/Library/CoreServices/SystemVersion.plist ]; then
+    if ! command -v brew >/dev/null 2>&1; then
+      error "Homebrew is required to install Git on macOS. Install Homebrew and rerun."
+    fi
+
+    if ! brew list --versions git >/dev/null 2>&1; then
+      brew install git
+    fi
+  elif command -v git >/dev/null 2>&1; then
     return
-  fi
-
-  if ! command -v apt-get >/dev/null 2>&1; then
+  elif ! command -v apt-get >/dev/null 2>&1; then
     error "Git is required to install dotfiles. Install git manually and rerun."
-  fi
-
-  if [ "$EUID" -ne 0 ]; then
+  elif [ "$EUID" -ne 0 ]; then
     sudo apt-get update
     sudo apt-get install -y git
   else
@@ -62,22 +73,21 @@ line_exists() {
   grep -Fqx -- "$line" "$file"
 }
 
-ensure_bashrc() {
-  local bashrc="$HOME/.bashrc"
+ensure_bash_config() {
   local line
   local missing_lines=()
   local needs_update=0
 
-  if [ -L "$bashrc" ]; then
-    error "$bashrc is a symlink. Replace it with a regular file and rerun."
+  if [ -L "$BASH_CONFIG_FILE" ]; then
+    error "$BASH_CONFIG_FILE is a symlink. Replace it with a regular file and rerun."
   fi
 
-  if [ ! -e "$bashrc" ]; then
-    : >"$bashrc"
+  if [ ! -e "$BASH_CONFIG_FILE" ]; then
+    : >"$BASH_CONFIG_FILE"
   fi
 
-  for line in "${BASHRC_LINES[@]}"; do
-    if ! line_exists "$line" "$bashrc"; then
+  for line in "${BASH_CONFIG_LINES[@]}"; do
+    if ! line_exists "$line" "$BASH_CONFIG_FILE"; then
       missing_lines+=("$line")
       needs_update=1
     fi
@@ -92,7 +102,7 @@ ensure_bashrc() {
     for line in "${missing_lines[@]}"; do
       printf '%s\n' "$line"
     done
-  } >>"$bashrc"
+  } >>"$BASH_CONFIG_FILE"
 }
 
 main() {
@@ -103,9 +113,9 @@ main() {
     ensure_bash_files "$file"
   done
 
-  ensure_bashrc
+  ensure_bash_config
 
-  printf 'Done. Installation completed. Please run "source ~/.bashrc" to apply the changes.\n'
+  printf 'Done. Installation completed. Please run "source %s" to apply the changes.\n' "$BASH_CONFIG_FILE"
 }
 
 main

@@ -12,10 +12,10 @@ Repository for personal shell configuration files and installer.
 
 `install.sh` is a remote installer script that:
 
-- ensures `git` is installed
+- ensures `git` is installed via Homebrew on macOS or APT on Debian
 - clones or updates the repository into `~/.dotfiles`
 - keeps `.bash_aliases` and `.bash_functions` in `~/.dotfiles`
-- updates the local `~/.bashrc` to source Bash files directly from `~/.dotfiles`
+- updates `~/.bash_profile` on macOS or `~/.bashrc` on Debian to source Bash files directly from `~/.dotfiles`
 
 ## Install via alias
 
@@ -33,6 +33,6 @@ dotfiles
 
 ## Notes
 
-- Existing `~/.bashrc` content is not overwritten.
+- Existing `~/.bash_profile` or `~/.bashrc` content is not overwritten.
 - The installer does not create symlinks.
 - The repository is cloned into `~/.dotfiles`.
