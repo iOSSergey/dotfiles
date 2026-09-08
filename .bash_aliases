@@ -28,6 +28,7 @@ alias ec2='ssh us-aws-ec2'
 alias gr='ssh grenada'
 alias ca='ssh carmelia'
 alias so='ssh solaro'
+alias le='ssh levanto'
 
 # File Management Aliases
 
