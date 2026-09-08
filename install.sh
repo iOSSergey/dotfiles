@@ -4,7 +4,7 @@ set -euo pipefail
 
 REPO_URL="https://github.com/iOSSergey/dotfiles.git"
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
-BASH_FILES=(.bash_aliases .bash_functions)
+BASH_FILES=(.bashrc .bash_aliases .bash_functions)
 
 if [ -f /System/Library/CoreServices/SystemVersion.plist ]; then
   BASH_CONFIG_FILE="$HOME/.bash_profile"
@@ -14,6 +14,7 @@ fi
 
 BASH_CONFIG_LINES=(
   "DOTFILES=\"\$HOME/.dotfiles\""
+  "[ -r \"\$DOTFILES/.bashrc\" ] && source \"\$DOTFILES/.bashrc\""
   "[ -r \"\$DOTFILES/.bash_aliases\" ] && source \"\$DOTFILES/.bash_aliases\""
   "[ -r \"\$DOTFILES/.bash_functions\" ] && source \"\$DOTFILES/.bash_functions\""
 )

@@ -4,6 +4,7 @@ Repository for personal shell configuration files and installer.
 
 ## Included files
 
+- `.bashrc`
 - `.bash_aliases`
 - `.bash_functions`
 - `install.sh`
@@ -14,8 +15,8 @@ Repository for personal shell configuration files and installer.
 
 - ensures `git` is installed via Homebrew on macOS or APT on Debian
 - clones or updates the repository into `~/.dotfiles`
-- keeps `.bash_aliases` and `.bash_functions` in `~/.dotfiles`
-- updates `~/.bash_profile` on macOS or `~/.bashrc` on Debian to source Bash files directly from `~/.dotfiles`
+- keeps `.bashrc`, `.bash_aliases` and `.bash_functions` in `~/.dotfiles`
+- updates `~/.bash_profile` on macOS or `~/.bashrc` on Debian and Ubuntu to source Bash files directly from `~/.dotfiles`
 
 ## Install via alias
 
