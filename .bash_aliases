@@ -302,6 +302,7 @@ alias dtag='docker tag'
 
 # Xray Aliases
 alias x='f() { docker exec 3x-ui sh -c "grep \"$1\" /app/access.log | tail -80"; }; f' # usage: x 1.2.3.4
+alias 3x-ui-sync-interactive='~/dev/scripts/3x-ui/restore/sync-3xui-interactive.sh --source solaro --target local >> /var/log/sync-3xui.log 2>&1'
 
 # Text Processing Shortcuts
 alias sortn='sort -n'
