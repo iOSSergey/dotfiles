@@ -330,6 +330,11 @@ alias gpgdec='gpg --decrypt'
 
 # Mac-specific aliases
 if [ -f /System/Library/CoreServices/SystemVersion.plist ]; then
+	alias vpn-on='sudo launchctl kickstart system/local.sing-box'
+	alias vpn-off='sudo launchctl kill SIGTERM system/local.sing-box'
+	alias vpn-check='sudo /usr/local/bin/sing-box check -c /usr/local/etc/sing-box/config.json'
+	alias vpn-status="sudo launchctl print system/local.sing-box | grep -E 'state =|pid =|last exit code ='"
+	alias vpn-log='sudo tail -n 30 /var/log/sing-box.log'
 	alias bs='cd ~/dev/scripts'
 	alias s='pmset sleepnow'
 	#alias a='nano ~/.bash_{aliases,functions} && source ~/.bash_profile && rsync ~/.bash_{aliases,functions} lobasto:~/' # Edit and reload aliases
