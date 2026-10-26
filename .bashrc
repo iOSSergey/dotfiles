@@ -115,6 +115,19 @@ if [[ $OSTYPE == darwin* ]]; then
     export KUBE_EDITOR=nano
     alias vi='vim'
 
+    # Date calculations
+    # START_DATE="2026-02-17"
+    # END_DATE="2027-02-06"
+    # CURRENT_DATE=$(date +%Y-%m-%d)
+
+    # date_to_seconds() {
+    #     date -j -f "%Y-%m-%d" "$1" "+%s"
+    # }
+
+    # N=$(( ($(date_to_seconds "$CURRENT_DATE") - $(date_to_seconds "$START_DATE")) / 86400 + 1 ))
+    # X=$(( ($(date_to_seconds "$END_DATE") - $(date_to_seconds "$START_DATE")) / 86400 + 1 ))
+    # PERCENTAGE=$(( (100 * N + X - 1) / X ))
+
     # Use the custom Mac display name without changing the system hostname.
     HOST_NAME=lobasto
     emojis=("👾" "🌐" "🎲" "🌍" "🐉" "🌵")
@@ -143,6 +156,7 @@ if [[ $OSTYPE == darwin* ]]; then
             fortune | cowsay -f tux
         fi
     fi
+    # echo "Day: $N of $X ($PERCENTAGE%)"
 
     _dotfiles_load_kubectl_completion() {
         local binary metadata key cache_dir cache_file temporary
