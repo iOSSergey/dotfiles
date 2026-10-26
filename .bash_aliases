@@ -338,8 +338,8 @@ if [ -f /System/Library/CoreServices/SystemVersion.plist ]; then
 	alias bs='cd ~/dev/scripts'
 	alias s='pmset sleepnow'
 	#alias a='nano ~/.bash_{aliases,functions} && source ~/.bash_profile && rsync ~/.bash_{aliases,functions} lobasto:~/' # Edit and reload aliases
-	alias a='vi ~/.bash_aliases && source ~/.bash_profile && rsync -avz -e "ssh" ~/.bash_{aliases,functions} jumpbox:~/' # Edit and reload aliases
-	alias b='vi ~/.bash_profile && vi ~/.bash_functions && source ~/.bash_profile' # Edit and reload bash profile
+	alias a='vi "${DOTFILES:-$HOME/.dotfiles}/.bash_aliases" && source ~/.bash_profile' # Edit and reload shared aliases
+	alias b='vi "${DOTFILES:-$HOME/.dotfiles}/.bashrc" "${DOTFILES:-$HOME/.dotfiles}/.bash_functions" && source ~/.bash_profile' # Edit and reload shared settings
 	alias xc='logout'		
 	alias o="open ." # Open current directory in Finder
 	alias reload='source ~/.bash_profile'
