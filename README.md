@@ -45,9 +45,6 @@ dotfiles
 
 ## Shell helpers
 
-- `timeout` delegates to GNU `timeout` or `gtimeout`, preserving its arguments and
-  exit status. Install GNU coreutils if neither command is available
-  (`brew install coreutils` on macOS).
 - `h [N]` shows recent history, `p PORT` counts remote endpoints, and `x PATTERN`
   filters Xray logs. These are functions defined in `.bash_functions`.
 - `pma` starts phpMyAdmin detached and schedules `docker stop` for its container

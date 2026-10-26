@@ -4,18 +4,6 @@ function mkcd() {
     mkdir -p "$1" && cd "$1"
 }
 
-# Delegate to an installed timeout implementation; never signal the shell.
-timeout() {
-    if type -P timeout >/dev/null 2>&1; then
-        command timeout "$@"
-    elif type -P gtimeout >/dev/null 2>&1; then
-        command gtimeout "$@"
-    else
-        printf 'timeout requires GNU coreutils (on macOS: brew install coreutils).\n' >&2
-        return 127
-    fi
-}
-
 # Remove legacy aliases before defining functions, including during reloads.
 unalias h p x pma 2>/dev/null || :
 
