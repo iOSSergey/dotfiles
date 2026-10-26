@@ -102,12 +102,8 @@ alias g='gcloud' # Shorter alias for Gcloud
 # AWS Aliases
 alias ak='aws eks update-kubeconfig --region us-east-1 --name my-eks-cluster'
 
-# Database Management Aliases
-alias pma='timeout 3600 docker run --rm --name pma -d -e PMA_ARBITRARY=1 -p 8080:80 phpmyadmin' # Launch phpMyAdmin with timeout
-
 # History Aliases
 alias hg='history | grep -i --color=auto' # Search command history
-alias h='f() { history | tail -"${1:-20}" | awk "{printf \"\033[1;32m%5s\033[0m  %s\n\", \$1, substr(\$0,index(\$0,\$2))}"; }; f' # usage: h [n], default 20
 
 # General Aliases
 alias 🍺="git checkout -b drunk" # Fun alias to create a git branch
@@ -192,7 +188,6 @@ alias dotfiles='curl -fsSL https://raw.githubusercontent.com/iOSSergey/dotfiles/
 #alias myip6='curl -s https://api64.ipify.org && echo'
 
 alias ipt='iptables -L OUTPUT -n -v --line-numbers'
-alias p='f() { netstat -tn | grep ":$1 " | awk "{print \$5}" | sed -E "s/^\[?([^]]+)\]?(:[0-9]+)$/\1/" | sort | uniq -c | sort -nr | head -20; }; f' # top IPs by port: p 443
 
 # MTProxy Diagnostics
 alias tg="ss -tn '( sport = :4433 )' | awk '{print \$5}' | cut -d: -f1 | sort | uniq"
@@ -301,7 +296,6 @@ alias dstats='docker stats --no-stream'
 alias dtag='docker tag'
 
 # Xray Aliases
-alias x='f() { docker exec 3x-ui sh -c "grep \"$1\" /app/access.log | tail -80"; }; f' # usage: x 1.2.3.4
 alias 3x-ui-sync-interactive='~/dev/scripts/3x-ui/restore/sync-3xui-interactive.sh --source solaro --target local >> /var/log/sync-3xui.log 2>&1'
 alias live='~/dev/scripts/3x-ui/analytics/xray-access-live.py'
 

@@ -4,6 +4,11 @@ set -euo pipefail
 
 REPO_URL="https://github.com/iOSSergey/dotfiles.git"
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
+# Store an absolute path so new shells do not depend on the install directory.
+if [[ $DOTFILES_DIR != /* ]]; then
+  DOTFILES_DIR="$PWD/$DOTFILES_DIR"
+fi
+printf -v DOTFILES_CONFIG_LINE 'DOTFILES=%q' "$DOTFILES_DIR"
 BASH_FILES=(.bashrc .bash_aliases .bash_functions)
 
 if [ -f /System/Library/CoreServices/SystemVersion.plist ]; then
@@ -13,7 +18,7 @@ else
 fi
 
 BASH_CONFIG_LINES=(
-  "DOTFILES=\"\$HOME/.dotfiles\""
+  "$DOTFILES_CONFIG_LINE"
   "[ -r \"\$DOTFILES/.bashrc\" ] && source \"\$DOTFILES/.bashrc\""
   "[ -r \"\$DOTFILES/.bash_aliases\" ] && source \"\$DOTFILES/.bash_aliases\""
   "[ -r \"\$DOTFILES/.bash_functions\" ] && source \"\$DOTFILES/.bash_functions\""
@@ -52,8 +57,8 @@ ensure_git() {
 
 clone_or_update_repo() {
   if [ -d "$DOTFILES_DIR/.git" ]; then
-    git -C "$DOTFILES_DIR" pull --quiet --ff-only origin main 2>/dev/null || true
-    git -C "$DOTFILES_DIR" fetch --quiet --all --prune
+    git -C "$DOTFILES_DIR" pull --quiet --ff-only origin main ||
+      error "Could not update $DOTFILES_DIR. Resolve the Git error above and rerun."
   else
     git clone --quiet --depth 1 "$REPO_URL" "$DOTFILES_DIR"
   fi
@@ -76,8 +81,9 @@ line_exists() {
 
 ensure_bash_config() {
   local line
-  local missing_lines=()
   local needs_update=0
+  local has_loader=0
+  local temporary backup
 
   if [ -L "$BASH_CONFIG_FILE" ]; then
     error "$BASH_CONFIG_FILE is a symlink. Replace it with a regular file and rerun."
@@ -89,7 +95,6 @@ ensure_bash_config() {
 
   for line in "${BASH_CONFIG_LINES[@]}"; do
     if ! line_exists "$line" "$BASH_CONFIG_FILE"; then
-      missing_lines+=("$line")
       needs_update=1
     fi
   done
@@ -98,12 +103,33 @@ ensure_bash_config() {
     return
   fi
 
+  # Replace the old loader as a unit so the path precedes every source line.
+  for line in "${BASH_CONFIG_LINES[@]:1}"; do
+    if line_exists "$line" "$BASH_CONFIG_FILE"; then
+      has_loader=1
+      break
+    fi
+  done
+
+  backup=$(mktemp "${BASH_CONFIG_FILE}.backup.XXXXXX")
+  cp -p "$BASH_CONFIG_FILE" "$backup"
+  temporary=$(mktemp "${BASH_CONFIG_FILE}.tmp.XXXXXX")
+  cp -p "$BASH_CONFIG_FILE" "$temporary"
   {
-    printf '\n'
-    for line in "${missing_lines[@]}"; do
+    while IFS= read -r line || [[ -n $line ]]; do
+      if [[ $has_loader -eq 1 ]]; then
+        case "$line" in
+          DOTFILES=*) continue ;;
+          "${BASH_CONFIG_LINES[1]}"|"${BASH_CONFIG_LINES[2]}"|"${BASH_CONFIG_LINES[3]}") continue ;;
+        esac
+      fi
       printf '%s\n' "$line"
-    done
-  } >>"$BASH_CONFIG_FILE"
+    done < "$BASH_CONFIG_FILE"
+    printf '\n'
+    printf '%s\n' "${BASH_CONFIG_LINES[@]}"
+  } > "$temporary"
+  mv -f "$temporary" "$BASH_CONFIG_FILE"
+  printf 'Previous Bash config saved to %s\n' "$backup"
 }
 
 main() {

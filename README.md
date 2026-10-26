@@ -38,6 +38,21 @@ dotfiles
 - Existing `~/.bash_profile` or `~/.bashrc` content is not overwritten.
 - The installer does not create symlinks.
 - The repository is cloned into `~/.dotfiles`.
+- Set `DOTFILES_DIR` to install into a different directory. The loader records
+  its absolute path, including paths containing spaces or shell metacharacters.
+- An update failure stops installation and displays the Git error.
+- When the loader changes, the previous Bash config is backed up alongside it.
+
+## Shell helpers
+
+- `timeout` delegates to GNU `timeout` or `gtimeout`, preserving its arguments and
+  exit status. Install GNU coreutils if neither command is available
+  (`brew install coreutils` on macOS).
+- `h [N]` shows recent history, `p PORT` counts remote endpoints, and `x PATTERN`
+  filters Xray logs. These are functions defined in `.bash_functions`.
+- `pma` starts phpMyAdmin detached and schedules `docker stop` for its container
+  ID after 3600 seconds. The timer survives shell exit; the host and Docker
+  daemon must be available when it runs. `--rm` removes the stopped container.
 
 ## Migrating an existing Mac profile
 
